@@ -19,7 +19,10 @@ import java.util.Optional;
 @NoArgsConstructor
 @Builder
 @Entity
+@Table(name = "users")
 public class User implements UserDetails {
+
+    // FIXME: split into 2 parts user and user profile
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -32,6 +35,7 @@ public class User implements UserDetails {
     private String passwordHash;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @Column(nullable = false)
@@ -52,25 +56,33 @@ public class User implements UserDetails {
     @Column
     private Instant lastSeen;
 
-    public Optional<Instant> getLastSeen() {
+    @Column
+    private Instant lastPasswordChangedAt;
+
+    public Optional<Instant> getLastPasswordChangedAtOpt() {
+        return Optional.ofNullable(this.lastPasswordChangedAt);
+    }
+
+    public Optional<Instant> getLastSeenOpt() {
         return Optional.ofNullable(this.lastSeen);
     }
 
-    public Optional<String> getLastName() {
+    public Optional<String> getLastNameOpt() {
         return Optional.ofNullable(this.lastName);
     }
 
-    public Optional<String> getBio() {
+    public Optional<String> getBioOpt() {
         return Optional.ofNullable(this.bio);
     }
 
-    public Optional<String> getAvatarUrl() {
+    public Optional<String> getAvatarUrlOpt() {
         return Optional.ofNullable(this.avatarUrl);
     }
 
     @PrePersist
     public void prePersist() {
         setCreatedAt(Instant.now());
+        setRole(Role.USER);
     }
 
     @Override

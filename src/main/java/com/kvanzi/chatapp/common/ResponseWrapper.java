@@ -24,9 +24,6 @@ public class ResponseWrapper<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final String reasonPhrase;
 
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private final List<String> errors;
-
     @JsonIgnore
     private final Map<String, Object> additionalFields = new LinkedHashMap<>();
 
@@ -38,7 +35,6 @@ public class ResponseWrapper<T> {
             HttpStatus status,
             String message,
             T data,
-            List<String> errors,
             Instant timestamp
     ) {
         this.status = status;
@@ -46,7 +42,6 @@ public class ResponseWrapper<T> {
         this.message = Objects.requireNonNull(message, "Message cannot be null");
         this.data = data;
         this.reasonPhrase = status.getReasonPhrase();
-        this.errors = errors != null ? Collections.unmodifiableList(errors) : null;
         this.timestamp = timestamp != null ? timestamp : Instant.now();
     }
 
@@ -71,33 +66,53 @@ public class ResponseWrapper<T> {
         return success(HttpStatus.OK, "Success", null);
     }
 
-    public static ResponseWrapper<Void> error(HttpStatus status, String message) {
+    public static <T> ResponseWrapper<T> error(HttpStatus status, String message) {
         validateErrorStatus(status);
-        return ResponseWrapper.<Void>builder()
+        return ResponseWrapper.<T>builder()
                 .status(status)
                 .message(message)
                 .build();
     }
 
-    public static ResponseWrapper<Void> error(HttpStatus status, String message, List<String> errors) {
+    public static <T> ResponseWrapper<T> error(HttpStatus status, String message, T errorData) {
         validateErrorStatus(status);
-        return ResponseWrapper.<Void>builder()
+        return ResponseWrapper.<T>builder()
                 .status(status)
                 .message(message)
-                .errors(errors)
+                .data(errorData)
                 .build();
     }
 
-    public static ResponseWrapper<Void> badRequest(String message) {
+    public static <T> ResponseWrapper<T> badRequest(String message) {
         return error(HttpStatus.BAD_REQUEST, message);
     }
 
-    public static ResponseWrapper<Void> notFound(String message) {
+    public static <T> ResponseWrapper<T> badRequest(String message, T errorData) {
+        return error(HttpStatus.BAD_REQUEST, message, errorData);
+    }
+
+    public static <T> ResponseWrapper<T> unauthorized(String message) {
+        return error(HttpStatus.UNAUTHORIZED, message);
+    }
+
+    public static <T> ResponseWrapper<T> unauthorized(String message, T errorData) {
+        return error(HttpStatus.UNAUTHORIZED, message, errorData);
+    }
+
+    public static <T> ResponseWrapper<T> notFound(String message) {
         return error(HttpStatus.NOT_FOUND, message);
     }
 
-    public static ResponseWrapper<Void> internalServerError(String message) {
+    public static <T> ResponseWrapper<T> notFound(String message, T errorData) {
+        return error(HttpStatus.NOT_FOUND, message, errorData);
+    }
+
+    public static <T> ResponseWrapper<T> internalServerError(String message) {
         return error(HttpStatus.INTERNAL_SERVER_ERROR, message);
+    }
+
+    public static <T> ResponseWrapper<T> internalServerError(String message, T errorData) {
+        return error(HttpStatus.INTERNAL_SERVER_ERROR, message, errorData);
     }
 
     public ResponseWrapper<T> addField(String key, Object value) {
@@ -134,19 +149,55 @@ public class ResponseWrapper<T> {
     }
 
     public static <T> ResponseEntity<ResponseWrapper<T>> okEntity(T data) {
-        return success(data).toResponseEntity();
+        return ResponseWrapper.success(data).toResponseEntity();
     }
 
     public static <T> ResponseEntity<ResponseWrapper<T>> okEntity(String message, T data) {
-        return success(HttpStatus.OK, message, data).toResponseEntity();
+        return ResponseWrapper.success(HttpStatus.OK, message, data).toResponseEntity();
     }
 
-    public static ResponseEntity<ResponseWrapper<Void>> badRequestEntity(String message) {
-        return badRequest(message).toResponseEntity();
+    public static ResponseEntity<ResponseWrapper<Void>> okEntity() {
+        return ResponseWrapper.success().toResponseEntity();
     }
 
-    public static ResponseEntity<ResponseWrapper<Void>> notFoundEntity(String message) {
-        return notFound(message).toResponseEntity();
+    public static <T> ResponseEntity<ResponseWrapper<T>> badRequestEntity(String message) {
+        return ResponseWrapper.<T>badRequest(message).toResponseEntity();
+    }
+
+    public static <T> ResponseEntity<ResponseWrapper<T>> badRequestEntity(String message, T errorData) {
+        return ResponseWrapper.badRequest(message, errorData).toResponseEntity();
+    }
+
+    public static <T> ResponseEntity<ResponseWrapper<T>> unauthorizedEntity(String message) {
+        return ResponseWrapper.<T>unauthorized(message).toResponseEntity();
+    }
+
+    public static <T> ResponseEntity<ResponseWrapper<T>> unauthorizedEntity(String message, T errorData) {
+        return ResponseWrapper.unauthorized(message, errorData).toResponseEntity();
+    }
+
+    public static <T> ResponseEntity<ResponseWrapper<T>> notFoundEntity(String message) {
+        return ResponseWrapper.<T>notFound(message).toResponseEntity();
+    }
+
+    public static <T> ResponseEntity<ResponseWrapper<T>> notFoundEntity(String message, T errorData) {
+        return ResponseWrapper.notFound(message, errorData).toResponseEntity();
+    }
+
+    public static <T> ResponseEntity<ResponseWrapper<T>> internalServerErrorEntity(String message) {
+        return ResponseWrapper.<T>internalServerError(message).toResponseEntity();
+    }
+
+    public static <T> ResponseEntity<ResponseWrapper<T>> internalServerErrorEntity(String message, T errorData) {
+        return ResponseWrapper.internalServerError(message, errorData).toResponseEntity();
+    }
+
+    public boolean isSuccess() {
+        return status.is2xxSuccessful();
+    }
+
+    public boolean isError() {
+        return !status.is2xxSuccessful();
     }
 
     private static void validateSuccessStatus(HttpStatus status) {

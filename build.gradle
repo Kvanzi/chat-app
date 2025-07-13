@@ -30,6 +30,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     testImplementation 'org.springframework.security:spring-security-test'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
@@ -38,4 +39,9 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.81' // bc - bouncy castle, prov - provider, jdk18on - 18+ jdk
+    implementation 'org.owasp.encoder:encoder:1.3.1'
+
+    compileOnly 'org.mapstruct:mapstruct:1.6.1'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.1'
 }

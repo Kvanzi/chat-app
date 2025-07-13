@@ -1,12 +1,12 @@
 package com.kvanzi.chatapp.auth.service;
 
-import com.kvanzi.chatapp.auth.entity.RefreshToken;
 import com.kvanzi.chatapp.auth.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.time.Instant;
 
 @Slf4j
 @Service
@@ -15,7 +15,9 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public Optional<RefreshToken> findById(String id) {
-        return refreshTokenRepository.findById(id);
+    @Scheduled(cron = "0 0 * * * *")
+    public void deleteExpiredTokens() {
+        Instant now = Instant.now();
+        refreshTokenRepository.deleteByExpiresAtBefore(now);
     }
 }

@@ -3,7 +3,6 @@ package com.kvanzi.chatapp.auth.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -14,6 +13,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Builder
 @Entity
+@Table(name = "refresh_tokens")
 public class RefreshToken {
 
     @Id
