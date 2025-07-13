@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: chat-app
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+
+jwt:
+  access-expiration: 900 # 15 minutes
+  refresh-expiration: 2_678_400 # 15 minutes
+  secret-key: classpath:jwt-secret.key
+
+server:
+  port: 8080
