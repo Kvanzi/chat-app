@@ -24,7 +24,7 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<ResponseWrapper<UserDTO>> me(@AuthenticationPrincipal User user) {
         return ResponseWrapper.okEntity(
-                userMapper.toDTO(user)
+                userMapper.userToDTO(user)
         );
     }
 
@@ -32,7 +32,7 @@ public class UserController {
     public ResponseEntity<ResponseWrapper<UserDTO>> me(@PathVariable String username) {
         User user = userService.findUserByUsername(username);
         return ResponseWrapper.okEntity(
-                userMapper.toDTO(user)
+                userMapper.userToDTO(user)
         );
     }
 }

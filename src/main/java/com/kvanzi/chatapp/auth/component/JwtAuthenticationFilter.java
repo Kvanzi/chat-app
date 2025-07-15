@@ -34,7 +34,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
         String uri = request.getRequestURI();
         return uri.startsWith("/api/v1/auth")
-                || uri.startsWith("/error");
+                || uri.startsWith("/error")
+                || uri.startsWith("/ws");
     }
 
     @Override

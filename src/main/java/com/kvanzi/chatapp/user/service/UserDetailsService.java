@@ -1,5 +1,6 @@
 package com.kvanzi.chatapp.user.service;
 
+import com.kvanzi.chatapp.user.component.IdentifiableUserDetails;
 import com.kvanzi.chatapp.user.exception.UserNotFoundException;
 import com.kvanzi.chatapp.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class UserDetailsService implements org.springframework.security.core.use
                 .orElseThrow(() -> new UserNotFoundException("User with username '%s' not found".formatted(Encode.forHtml(username))));
     }
 
-    public UserDetails loadUserById(String id) {
+    public IdentifiableUserDetails loadUserById(String id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User with id '%s' not found".formatted(Encode.forHtml(id))));
     }

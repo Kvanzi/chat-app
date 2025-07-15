@@ -32,7 +32,7 @@ public class JwtService {
     private int ACCESS_EXPIRATION;
     @Value("${jwt.refresh-expiration}")
     private int REFRESH_EXPIRATION;
-    private final static String BEARER_PREFIX = "Bearer ";
+    public final static String BEARER_PREFIX = "Bearer ";
 
     private final SecretKey secretKey;
     private final RefreshTokenRepository refreshTokenRepository;

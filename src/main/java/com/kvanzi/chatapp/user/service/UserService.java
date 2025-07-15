@@ -1,25 +1,51 @@
 package com.kvanzi.chatapp.user.service;
 
 import com.kvanzi.chatapp.user.entity.User;
+import com.kvanzi.chatapp.user.entity.UserProfile;
 import com.kvanzi.chatapp.user.exception.UserNotFoundException;
+import com.kvanzi.chatapp.user.exception.UsernameTakenException;
 import com.kvanzi.chatapp.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.owasp.encoder.Encode;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public User createUser(User user) {
-        if (user.getBio() != null && user.getBio().isBlank()) {
-            user.setBio(null);
+    @Transactional
+    public User createUser(String username, String password, String firstName, String lastName, String bio) {
+        userRepository.findByUsernameIgnoreCase(username).ifPresent(user -> {
+            throw new UsernameTakenException("Username already taken");
+        });
+
+        if (bio != null && bio.isBlank()) {
+            bio = null;
         }
-        if (user.getLastName() != null && user.getLastName().isBlank()) {
-            user.setLastName(null);
+        if (lastName != null && lastName.isBlank()) {
+            lastName = null;
         }
+
+        User user = User.builder()
+                .username(username)
+                .passwordHash(passwordEncoder.encode(password))
+                .build();
+        user = userRepository.save(user);
+
+        UserProfile userProfile = UserProfile.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .bio(bio)
+                .build();
+
+        user.setProfile(userProfile);
+        userProfile.setUser(user);
+
         return userRepository.save(user);
     }
 

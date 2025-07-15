@@ -18,15 +18,6 @@ public class UserDTO {
     private String id;
     private String username;
     private Role role;
-    private String firstName;
-    private String lastName;
-    private String avatarUrl;
-    private String bio;
     private Instant createdAt;
-    private Instant lastSeen;
-    private UserStatus status;
-
-    public UserStatus getStatus() {
-        return status != null ? status : UserStatus.OFFLINE;
-    }
+    private UserProfileDTO profile;
 }

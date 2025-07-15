@@ -2,7 +2,9 @@ package com.kvanzi.chatapp.auth.component;
 
 import com.kvanzi.chatapp.auth.enumeration.TokenType;
 import com.kvanzi.chatapp.auth.exception.CustomAuthenticationException;
+import com.kvanzi.chatapp.auth.exception.InvalidTokenTypeException;
 import com.kvanzi.chatapp.auth.service.JwtService;
+import com.kvanzi.chatapp.user.component.IdentifiableUserDetails;
 import com.kvanzi.chatapp.user.service.UserDetailsService;
 import com.kvanzi.chatapp.user.exception.UserNotFoundException;
 import io.jsonwebtoken.*;
@@ -46,10 +48,10 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             }
 
             if (tokenType != ACCESS) {
-                throw new BadCredentialsException("You can't use '%s' token for access this resource".formatted(tokenType));
+                throw new InvalidTokenTypeException("You can't use '%s' token for access this resource".formatted(tokenType)); // FIXME: ADD CATCH HANDLER
             }
 
-            UserDetails userDetails = userDetailsService.loadUserById(userId);
+            IdentifiableUserDetails userDetails = userDetailsService.loadUserById(userId);
             return new JwtAuthenticationToken(
                     token,
                     userDetails,
@@ -63,7 +65,10 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("Unexpected token validation exception. Re login or refresh your token");
         } catch (UserNotFoundException e) {
             throw new BadCredentialsException("Invalid token. Re login please");
+        } catch (InvalidTokenTypeException e) {
+            throw new BadCredentialsException(e.getMessage());
         } catch (RuntimeException e) {
+            log.error("", e);
             throw new BadCredentialsException("Internal server error");
         }
     }

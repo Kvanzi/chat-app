@@ -36,7 +36,7 @@ public class AuthController {
 
         return ResponseWrapper.okEntity(
                 "User created successfully",
-                userMapper.toDTO(user)
+                userMapper.userToDTO(user)
         );
     }
 
@@ -49,7 +49,7 @@ public class AuthController {
         return ResponseWrapper.success(
                 HttpStatus.OK,
                 "User logged in successfully",
-                userMapper.toDTO(user)
+                userMapper.userToDTO(user)
         )
                 .addField("accessToken", jwtService.generateAccessToken(user.getId()))
                 .addField("refreshToken", jwtService.generateRefreshToken(user.getId()))
