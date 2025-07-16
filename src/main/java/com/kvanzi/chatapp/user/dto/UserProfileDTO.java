@@ -20,8 +20,4 @@ public class UserProfileDTO {
     private String bio;
     private Instant lastSeen;
     private UserStatus status;
-
-    public UserStatus getStatus() {
-        return status != null ? status : UserStatus.OFFLINE;
-    }
 }

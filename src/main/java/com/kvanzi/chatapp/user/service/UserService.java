@@ -1,9 +1,11 @@
 package com.kvanzi.chatapp.user.service;
 
+import com.kvanzi.chatapp.user.dto.UserDTO;
 import com.kvanzi.chatapp.user.entity.User;
 import com.kvanzi.chatapp.user.entity.UserProfile;
 import com.kvanzi.chatapp.user.exception.UserNotFoundException;
 import com.kvanzi.chatapp.user.exception.UsernameTakenException;
+import com.kvanzi.chatapp.user.mapper.UserMapper;
 import com.kvanzi.chatapp.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.owasp.encoder.Encode;
@@ -11,12 +13,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
+    private final UserStatusService statusService;
 
     @Transactional
     public User createUser(String username, String password, String firstName, String lastName, String bio) {
@@ -54,5 +60,17 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(
                         "User with username '%s' not found".formatted(Encode.forHtml(username))
                 ));
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public UserDTO userToDTO(User entity) {
+        UserDTO dto = userMapper.userToDTO(entity);
+        if (entity.getProfile() != null && dto.getProfile() != null) {
+            dto.getProfile().setStatus(statusService.getUserStatus(entity.getId()));
+        }
+        return dto;
     }
 }

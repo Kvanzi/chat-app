@@ -35,7 +35,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authenticationProvider(jwtAuthenticationProvider)
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/api/v1/auth/**", "/error", "/ws/**").permitAll()
+                        .requestMatchers(
+                                "/api/v1/auth/**",
+                                "/error",
+                                "/ws/**",
+                                "/api/v1/users/@*",
+                                "/api/v1/users",
+                                "/favicon.ico"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptionHandler -> exceptionHandler

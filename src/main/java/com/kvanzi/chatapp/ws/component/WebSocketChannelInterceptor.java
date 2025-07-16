@@ -2,6 +2,7 @@ package com.kvanzi.chatapp.ws.component;
 
 import com.kvanzi.chatapp.auth.component.JwtAuthenticationToken;
 import com.kvanzi.chatapp.auth.service.JwtService;
+import com.kvanzi.chatapp.user.component.IdentifiableUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -39,14 +40,6 @@ public class WebSocketChannelInterceptor implements ChannelInterceptor {
         };
     }
 
-    private Message<?> handleSend(Message<?> message, StompHeaderAccessor accessor) {
-        String sessionId = accessor.getSessionId();
-
-        // FIXME: IMPLEMENT auth check
-
-        return message;
-    }
-
     private Message<?> handleConnect(Message<?> message, StompHeaderAccessor accessor) {
         String authorizationHeader = accessor.getFirstNativeHeader(HttpHeaders.AUTHORIZATION);
         if (authorizationHeader == null || !authorizationHeader.startsWith(JwtService.BEARER_PREFIX)) {
@@ -56,13 +49,24 @@ public class WebSocketChannelInterceptor implements ChannelInterceptor {
         String token = authorizationHeader.substring(JwtService.BEARER_PREFIX.length()).trim();
         try {
             var jwtAuthToken = new JwtAuthenticationToken(token);
-            Authentication authenticatedToken = authManager.authenticate(jwtAuthToken);
-            accessor.setUser(authenticatedToken);
+            Authentication authentication = authManager.authenticate(jwtAuthToken);
+
+            String userId = ((IdentifiableUserDetails) authentication.getPrincipal()).getId();
+            accessor.getSessionAttributes().put("userId", userId); // FIXME: ADD ADDITIONAL CHECK
+
             return message;
         } catch (BadCredentialsException e) {
             throw new MessageHandlingException(message, e.getMessage());
         } catch (RuntimeException e) {
             throw new MessageHandlingException(message, "Internal server error");
         }
+    }
+
+    private Message<?> handleSend(Message<?> message, StompHeaderAccessor accessor) {
+        String sessionId = accessor.getSessionId();
+
+        // FIXME: IMPLEMENT auth check
+
+        return message;
     }
 }

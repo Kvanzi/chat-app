@@ -16,9 +16,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Set;
 
 @Slf4j
 @Component
@@ -30,12 +32,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AuthenticationManager authManager;
     private final JwtService jwtService;
 
+    private final static Set<String> SHOULD_NOT_FILTER_PATTERNS = Set.of(
+            "/api/v1/auth/**",
+            "/error",
+            "/ws",
+            "/api/v1/users/@*",
+            "/api/v1/users",
+            "/favicon.ico"
+    );
+    private final static AntPathMatcher PATH_MATCHER = new AntPathMatcher();
+
     @Override
-    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
-        String uri = request.getRequestURI();
-        return uri.startsWith("/api/v1/auth")
-                || uri.startsWith("/error")
-                || uri.startsWith("/ws");
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        return SHOULD_NOT_FILTER_PATTERNS.stream()
+                .anyMatch(pattern -> PATH_MATCHER.match(pattern, requestURI));
     }
 
     @Override
