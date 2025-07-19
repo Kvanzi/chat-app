@@ -238,6 +238,14 @@ public class JwtService {
     }
 
     public String extractJWTToken(HttpServletRequest request) {
+        if (request.getRequestURI().equals("/ws")) {
+            String authParameter = request.getParameter("Authorization");
+            if (authParameter != null && !authParameter.isBlank()) {
+                return authParameter;
+            }
+            return null;
+        }
+
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {

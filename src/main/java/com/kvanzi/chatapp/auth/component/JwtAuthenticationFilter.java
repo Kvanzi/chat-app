@@ -35,7 +35,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final static Set<String> SHOULD_NOT_FILTER_PATTERNS = Set.of(
             "/api/v1/auth/**",
             "/error",
-            "/ws",
             "/api/v1/users/@*",
             "/api/v1/users",
             "/favicon.ico"

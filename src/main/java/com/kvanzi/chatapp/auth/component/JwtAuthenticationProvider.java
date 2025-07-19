@@ -48,7 +48,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             }
 
             if (tokenType != ACCESS) {
-                throw new InvalidTokenTypeException("You can't use '%s' token for access this resource".formatted(tokenType)); // FIXME: ADD CATCH HANDLER
+                throw new InvalidTokenTypeException("You can't use '%s' token for access this resource".formatted(tokenType));
             }
 
             IdentifiableUserDetails userDetails = userDetailsService.loadUserById(userId);

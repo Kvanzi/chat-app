@@ -9,7 +9,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -35,15 +34,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authenticationProvider(jwtAuthenticationProvider)
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers(
-                                "/api/v1/auth/**",
-                                "/error",
-                                "/ws/**",
-                                "/api/v1/users/@*",
-                                "/api/v1/users",
-                                "/favicon.ico"
-                        ).permitAll()
-                        .anyRequest().authenticated()
+                                .requestMatchers(
+                                        "/api/v1/auth/**",
+                                        "/error",
+                                        "/api/v1/users/@*",
+                                        "/api/v1/users",
+                                        "/favicon.ico"
+                                ).permitAll()
+                                .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptionHandler -> exceptionHandler
                         .authenticationEntryPoint(authEntryPoint)

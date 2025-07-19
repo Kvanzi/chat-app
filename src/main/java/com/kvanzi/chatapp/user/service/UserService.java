@@ -7,6 +7,7 @@ import com.kvanzi.chatapp.user.exception.UserNotFoundException;
 import com.kvanzi.chatapp.user.exception.UsernameTakenException;
 import com.kvanzi.chatapp.user.mapper.UserMapper;
 import com.kvanzi.chatapp.user.repository.UserRepository;
+import com.kvanzi.chatapp.ws.service.UserStatusService;
 import lombok.RequiredArgsConstructor;
 import org.owasp.encoder.Encode;
 import org.springframework.security.crypto.password.PasswordEncoder;

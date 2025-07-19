@@ -3,7 +3,6 @@ package com.kvanzi.chatapp.user.controller;
 import com.kvanzi.chatapp.common.ResponseWrapper;
 import com.kvanzi.chatapp.user.dto.UserDTO;
 import com.kvanzi.chatapp.user.entity.User;
-import com.kvanzi.chatapp.user.mapper.UserMapper;
 import com.kvanzi.chatapp.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +22,11 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final UserMapper userMapper;
 
     @GetMapping("/me")
     public ResponseEntity<ResponseWrapper<UserDTO>> me(@AuthenticationPrincipal User user) {
         return ResponseWrapper.okEntity(
-                userMapper.userToDTO(user)
+                userService.userToDTO(user)
         );
     }
 
@@ -36,7 +34,7 @@ public class UserController {
     public ResponseEntity<ResponseWrapper<UserDTO>> me(@PathVariable String username) {
         User user = userService.findUserByUsername(username);
         return ResponseWrapper.okEntity(
-                userMapper.userToDTO(user)
+                userService.userToDTO(user)
         );
     }
 
