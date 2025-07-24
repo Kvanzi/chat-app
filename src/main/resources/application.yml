@@ -16,13 +16,22 @@ spring:
       timeout: 2000ms
 
 jwt:
-  access-expiration: 900 # 15 minutes
-  refresh-expiration: 2_678_400 # 15 minutes
+  access-expiration-sec: 900 # 15 minutes
+  refresh-expiration-sec: 2_678_400 # 15 minutes
   secret-key: classpath:jwt-secret.key
 
 logging:
   level:
-    com.kvanzi.chatapp: debug
+    com:
+      kvanzi:
+        chatapp: debug
+#    org:
+#      springframework:
+#        web:
+#          socket: debug
+#        messaging: debug
+#        security: debug
+
 
 server:
   port: 8080

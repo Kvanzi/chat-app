@@ -53,7 +53,7 @@ public class User implements IdentifiableUserDetails {
     @PrePersist
     public void prePersist() {
         setCreatedAt(Instant.now());
-        setRole(Role.USER);
+        setRole(Role.ROLE_USER);
     }
 
     @Override

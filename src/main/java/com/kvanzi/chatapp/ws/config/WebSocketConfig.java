@@ -1,9 +1,8 @@
-package com.kvanzi.chatapp.config;
+package com.kvanzi.chatapp.ws.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kvanzi.chatapp.ws.decorator.CustomWebSocketHandlerDecorator;
-import com.kvanzi.chatapp.ws.interceptor.AuthChannelInterceptor;
-import com.kvanzi.chatapp.ws.interceptor.WebSocketChannelInterceptor;
+import com.kvanzi.chatapp.ws.interceptor.AuthenticationChannelInterceptor;
 import com.kvanzi.chatapp.ws.service.WebSocketSessionManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +13,6 @@ import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -28,15 +26,16 @@ import java.util.List;
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final AuthenticationManager authManager;
     private final WebSocketSessionManager sessionManager;
-    private final static String USER_DESTINATION_PREFIX = "/user/";
+    private final AuthenticationChannelInterceptor authChannelInterceptor;
 
     @Override
     public void configureMessageBroker(@NonNull MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/user", "/topic");
+        registry.enableSimpleBroker("/topic", "/queue")
+                .setHeartbeatValue(new long[]{60_000, 60_000}) // 60sec
+                .setTaskScheduler(wsTaskScheduler());
         registry.setApplicationDestinationPrefixes("/app");
-        registry.setUserDestinationPrefix(USER_DESTINATION_PREFIX);
+        registry.setUserDestinationPrefix("/user");
     }
 
     @Override
@@ -62,10 +61,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureClientInboundChannel(@NonNull ChannelRegistration registration) {
-        registration.interceptors(
-                new AuthChannelInterceptor(authManager),
-                new WebSocketChannelInterceptor(USER_DESTINATION_PREFIX)
-        );
+        registration.interceptors(authChannelInterceptor);
     }
 
     @Override
@@ -76,7 +72,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     }
 
     @Bean
-    public TaskScheduler heartbeatTaskScheduler() {
+    public TaskScheduler wsTaskScheduler() {
         return new ThreadPoolTaskScheduler();
     }
 }

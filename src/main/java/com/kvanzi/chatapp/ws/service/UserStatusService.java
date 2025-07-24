@@ -18,10 +18,6 @@ import static com.kvanzi.chatapp.user.enumeration.UserStatus.ONLINE;
 @RequiredArgsConstructor
 public class UserStatusService {
 
-    // TODO: Добавить ограничение на подключение к сокету с 1 аккаунта (около 6 на 1 аккаунт)
-    // TODO: Добавить ограничение на подключение к сокету с 1 айпи (около 20 на 1 айпи)
-    // TODO: Реализовать систему кастомного heartbeat'а, что и будет расширять сессию, в противном случае отключает ее
-
     private final RedisTemplate<String, Object> redisTemplate;
     private final SimpMessagingTemplate messagingTemplate;
 

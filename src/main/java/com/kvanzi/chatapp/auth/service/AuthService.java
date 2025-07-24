@@ -41,7 +41,7 @@ public class AuthService {
 
     public User signIn(String username, String password) {
         User user = userRepository.findByUsernameIgnoreCase(username)
-                .orElseThrow(() -> new UserNotFoundException("User with username '%s' not found".formatted(Encode.forHtml(username))));
+                .orElseThrow(() -> new UserNotFoundException("Invalid username or password"));
 
         authManager.authenticate(new UsernamePasswordAuthenticationToken(
                 username,

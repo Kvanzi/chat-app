@@ -28,9 +28,9 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    @Value("${jwt.access-expiration}")
+    @Value("${jwt.access-expiration-sec}")
     private int ACCESS_EXPIRATION;
-    @Value("${jwt.refresh-expiration}")
+    @Value("${jwt.refresh-expiration-sec}")
     private int REFRESH_EXPIRATION;
     public final static String BEARER_PREFIX = "Bearer ";
 
@@ -239,7 +239,7 @@ public class JwtService {
 
     public String extractJWTToken(HttpServletRequest request) {
         if (request.getRequestURI().equals("/ws")) {
-            String authParameter = request.getParameter("Authorization");
+            String authParameter = request.getParameter(HttpHeaders.AUTHORIZATION);
             if (authParameter != null && !authParameter.isBlank()) {
                 return authParameter;
             }
