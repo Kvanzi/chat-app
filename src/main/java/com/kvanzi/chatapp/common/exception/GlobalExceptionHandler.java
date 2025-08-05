@@ -1,6 +1,9 @@
 package com.kvanzi.chatapp.common.exception;
 
 import com.kvanzi.chatapp.auth.exception.RefreshAccessTokenException;
+import com.kvanzi.chatapp.chat.exception.ChatNotFoundException;
+import com.kvanzi.chatapp.chat.exception.NotChatMemberException;
+import com.kvanzi.chatapp.chat.exception.SameUserChatException;
 import com.kvanzi.chatapp.common.ResponseWrapper;
 import com.kvanzi.chatapp.user.exception.UserNotFoundException;
 import com.kvanzi.chatapp.user.exception.UsernameTakenException;
@@ -52,12 +55,27 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ResponseWrapper<Void>> handle(UserNotFoundException e) {
+    public ResponseEntity<ResponseWrapper<Void>> handleUserNotFound(UserNotFoundException e) {
+        return ResponseWrapper.notFoundEntity(e.getMessage());
+    }
+
+    @ExceptionHandler(ChatNotFoundException.class)
+    public ResponseEntity<ResponseWrapper<Void>> handleChatNotFound(ChatNotFoundException e) {
         return ResponseWrapper.notFoundEntity(e.getMessage());
     }
 
     @ExceptionHandler(UsernameTakenException.class)
-    public ResponseEntity<ResponseWrapper<Void>> handle(UsernameTakenException e) {
+    public ResponseEntity<ResponseWrapper<Void>> handleUsernameTaken(UsernameTakenException e) {
+        return ResponseWrapper.badRequestEntity(e.getMessage());
+    }
+
+    @ExceptionHandler(NotChatMemberException.class)
+    public ResponseEntity<ResponseWrapper<Void>> handleNotChatMember(NotChatMemberException e) {
+        return ResponseWrapper.badRequestEntity(e.getMessage());
+    }
+
+    @ExceptionHandler(SameUserChatException.class)
+    public ResponseEntity<ResponseWrapper<Void>> handleSameUserChat(SameUserChatException e) {
         return ResponseWrapper.badRequestEntity(e.getMessage());
     }
 
