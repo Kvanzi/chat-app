@@ -2,6 +2,7 @@ package com.kvanzi.chatapp.ws.service;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
@@ -17,7 +18,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class WebSocketSessionManager {
 
     @Data
@@ -31,10 +31,15 @@ public class WebSocketSessionManager {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final static Map<String, WebSocketSession> localSessions = new ConcurrentHashMap<>();
-    private final static long SESSION_DURATION_SECONDS = 300; // 5 min
+    private final long SESSION_DURATION_SECONDS;
 
     private static final String USER_SESSIONS_KEY_PREFIX = "websocket:sessions:user:";
     private static final String SESSIONS_INFOS_KEY = "websocket:sessions:infos";
+
+    public WebSocketSessionManager(RedisTemplate<String, Object> redisTemplate, @Value("${jwt.access-expiration-sec}") int sessionDurationSeconds) {
+        this.redisTemplate = redisTemplate;
+        this.SESSION_DURATION_SECONDS = sessionDurationSeconds;
+    }
 
     public void addSession(WebSocketSession session, String userId) {
         if (userId == null || session == null || !session.isOpen()) {

@@ -1,30 +1,27 @@
 package com.kvanzi.chatapp.user.entity;
 
+import com.kvanzi.chatapp.common.entity.BaseEntity;
 import com.kvanzi.chatapp.user.component.IdentifiableUserDetails;
 import com.kvanzi.chatapp.user.enumeration.Role;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
 @Table(name = "users")
-public class User implements IdentifiableUserDetails {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+public class User extends BaseEntity implements IdentifiableUserDetails {
 
     @Column(unique = true, nullable = false)
     private String username;
@@ -35,9 +32,6 @@ public class User implements IdentifiableUserDetails {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    @Column(nullable = false)
-    private Instant createdAt;
 
     @Column
     private Instant lastPasswordChangedAt;
@@ -52,7 +46,6 @@ public class User implements IdentifiableUserDetails {
 
     @PrePersist
     public void prePersist() {
-        setCreatedAt(Instant.now());
         setRole(Role.ROLE_USER);
     }
 
@@ -64,17 +57,5 @@ public class User implements IdentifiableUserDetails {
     @Override
     public String getPassword() {
         return this.passwordHash;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(getId(), user.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getId());
     }
 }

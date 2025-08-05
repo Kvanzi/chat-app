@@ -21,7 +21,11 @@ public class WebSocketSecurityConfig {
         return messages
                 .nullDestMatcher().authenticated()
                 .simpTypeMatchers(UNSUBSCRIBE, DISCONNECT).permitAll()
-                .simpDestMatchers("/user/**", "/app/**").hasRole("USER")
+                .simpDestMatchers(
+                        "/user/**",
+                        "/app/profile.setStatus",
+                        "/app/session.extendAuthentication"
+                ).hasRole("USER")
                 .simpSubscribeDestMatchers("/user/**").hasRole("USER")
                 .anyMessage().denyAll()
                 .build();

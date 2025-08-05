@@ -24,7 +24,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/me")
-    public ResponseEntity<ResponseWrapper<UserDTO>> me(@AuthenticationPrincipal User user) {
+    public ResponseEntity<ResponseWrapper<UserDTO>> me(@AuthenticationPrincipal User currentUser) {
+        User user = userService.findById(currentUser.getId());
         return ResponseWrapper.okEntity(
                 userService.userToDTO(user)
         );

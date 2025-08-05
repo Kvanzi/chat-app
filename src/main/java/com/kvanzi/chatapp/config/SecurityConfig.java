@@ -30,7 +30,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationProvider jwtAuthenticationProvider, JwtAuthenticationFilter authFilter, AuthenticationEntryPoint authEntryPoint) throws Exception {
         return http
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(cors ->
+                        cors.configurationSource(corsConfig())
+                )
                 .csrf(AbstractHttpConfigurer::disable)
                 .authenticationProvider(jwtAuthenticationProvider)
                 .authorizeHttpRequests(req -> req
@@ -75,7 +77,8 @@ public class SecurityConfig {
     public UrlBasedCorsConfigurationSource corsConfig() {
         var config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
-                "http://localhost:63343"
+                "http://localhost:63343",
+                "http://localhost:5173" // vite
         ));
         config.setAllowedMethods(List.of("*"));
         config.setAllowedHeaders(List.of("*"));

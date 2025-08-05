@@ -41,7 +41,9 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
 
         for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
-            String fieldName = violation.getPropertyPath().toString();
+            String fullPath = violation.getPropertyPath().toString();
+            String[] pathParts = fullPath.split("\\.");
+            String fieldName = pathParts[pathParts.length - 1];
             String errorMessage = violation.getMessage();
             errors.put(fieldName, errorMessage);
         }

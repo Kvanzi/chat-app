@@ -18,6 +18,8 @@ import static com.kvanzi.chatapp.user.enumeration.UserStatus.ONLINE;
 @RequiredArgsConstructor
 public class UserStatusService {
 
+    // TODO: ADD BATCH LOAD
+
     private final RedisTemplate<String, Object> redisTemplate;
     private final SimpMessagingTemplate messagingTemplate;
 

@@ -1,24 +1,21 @@
 package com.kvanzi.chatapp.user.entity;
 
+import com.kvanzi.chatapp.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
-import java.util.Objects;
 import java.util.Optional;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
 @Table(name = "users_profiles")
-public class UserProfile {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+public class UserProfile extends BaseEntity {
 
     @Column(nullable = false)
     private String firstName;
@@ -53,17 +50,5 @@ public class UserProfile {
 
     public Optional<String> getAvatarUrlOpt() {
         return Optional.ofNullable(this.avatarUrl);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        UserProfile that = (UserProfile) o;
-        return Objects.equals(getId(), that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getId());
     }
 }

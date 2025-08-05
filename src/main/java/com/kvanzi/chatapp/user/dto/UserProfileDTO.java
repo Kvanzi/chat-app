@@ -19,5 +19,7 @@ public class UserProfileDTO {
     private String avatarUrl;
     private String bio;
     private Instant lastSeen;
-    private UserStatus status;
+
+    @Builder.Default
+    private UserStatus status = UserStatus.OFFLINE;
 }
